@@ -1,35 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AR - Realidad Aumentada Interactiva</title>
-
-    <!-- Librerías AR -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        html,
-        body {
+        html, body {
             height: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0f1724 0%, #0b3d91 50%, #0b2b5a 100%);
             color: #fff;
-            -webkit-font-smoothing: antialiased;
         }
-
-        /* ========================================
-           PANTALLA DE INICIO
-        ======================================== */
         #inicio {
             position: fixed;
             inset: 0;
@@ -42,30 +31,18 @@
             z-index: 100;
             background: linear-gradient(180deg, #002b5b 0%, #00509e 100%);
         }
-
-        #inicio img {
-            width: 160px;
-            height: auto;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 12px rgba(255, 140, 0, 0.7));
-        }
-
         #inicio h1 {
             font-size: 2rem;
             color: #ff8c00;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            margin-bottom: 5px;
         }
-
         #inicio p {
             font-size: 1rem;
             color: #e2e8f0;
             max-width: 320px;
             text-align: center;
             line-height: 1.5;
-            margin-bottom: 20px;
         }
-
         #btnEscanear {
             background: linear-gradient(90deg, #ff8c00, #ffb347);
             color: #002b5b;
@@ -78,19 +55,14 @@
             box-shadow: 0 4px 12px rgba(255, 140, 0, 0.5);
             transition: all 0.3s ease;
         }
-
         #btnEscanear:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 15px rgba(255, 180, 70, 0.7);
         }
-
-        #btnEscanear:active {
-            transform: scale(0.98);
+        #btnEscanear:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-
-        /* ========================================
-           CONTENEDOR AR
-        ======================================== */
         #ar-wrapper {
             width: 100vw;
             height: 100vh;
@@ -100,31 +72,15 @@
             left: 0;
             z-index: 1;
         }
-
-        .mindar-video {
+        a-scene, canvas {
             position: fixed !important;
-            top: 0;
-            left: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-            object-fit: cover !important;
-            z-index: 0 !important;
-        }
-
-        a-scene,
-        canvas {
-            position: fixed !important;
-            top: 0;
-            left: 0;
+            top: 0 !important;
+            left: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
             background: transparent !important;
             z-index: 1 !important;
         }
-
-        /* ========================================
-           CONTROLES DE VIDEO AR
-        ======================================== */
         #controles {
             position: fixed;
             bottom: 80px;
@@ -139,11 +95,9 @@
             z-index: 50;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
-
         #controles.visible {
             display: flex;
         }
-
         .control-btn {
             width: 45px;
             height: 45px;
@@ -158,23 +112,13 @@
             align-items: center;
             justify-content: center;
         }
-
         .control-btn:hover {
             background: rgba(255, 255, 255, 0.25);
             transform: scale(1.1);
         }
-
-        .control-btn:active {
-            transform: scale(0.95);
-        }
-
         .control-btn.active {
             background: #ff8c00;
         }
-
-        /* ========================================
-           MENSAJES DE ESTADO
-        ======================================== */
         #hint {
             position: fixed;
             bottom: 20px;
@@ -190,22 +134,15 @@
             max-width: 90%;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-
         #hint.success {
             background: rgba(76, 175, 80, 0.8);
         }
-
         #hint.warning {
             background: rgba(255, 152, 0, 0.8);
         }
-
         #hint.error {
             background: rgba(244, 67, 54, 0.8);
         }
-
-        /* ========================================
-           LOADING
-        ======================================== */
         #loading {
             position: fixed;
             inset: 0;
@@ -214,12 +151,12 @@
             justify-content: center;
             background: rgba(0, 0, 0, 0.8);
             z-index: 90;
+            flex-direction: column;
+            gap: 20px;
         }
-
         #loading.visible {
             display: flex;
         }
-
         .spinner {
             width: 50px;
             height: 50px;
@@ -228,16 +165,14 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
-
-        /* ========================================
-           BOTÓN CERRAR
-        ======================================== */
+        #loadingText {
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
         #btnCerrar {
             position: fixed;
             top: 20px;
@@ -257,15 +192,10 @@
             z-index: 70;
             transition: all 0.2s;
         }
-
         #btnCerrar:hover {
             background: rgba(244, 67, 54, 0.8);
             transform: scale(1.1);
         }
-
-        /* ========================================
-           INDICADOR DE TRACKING
-        ======================================== */
         #trackingIndicator {
             position: fixed;
             top: 20px;
@@ -280,11 +210,9 @@
             gap: 8px;
             z-index: 70;
         }
-
         #trackingIndicator.visible {
             display: flex;
         }
-
         .tracking-dot {
             width: 10px;
             height: 10px;
@@ -292,119 +220,51 @@
             background: #ff5722;
             animation: pulse 1.5s infinite;
         }
-
         .tracking-dot.active {
             background: #4caf50;
         }
-
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        /* ========================================
-           RESPONSIVE
-        ======================================== */
-        @media (max-width: 480px) {
-            #inicio h1 {
-                font-size: 1.5rem;
-            }
-
-            #btnEscanear {
-                padding: 12px 24px;
-                font-size: 1rem;
-            }
-
-            .control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
-
 <body>
-    <!-- ========================================
-         PANTALLA DE INICIO
-    ======================================== -->
     <div id="inicio">
-        <img src="logo.png" alt="Logo del Proyecto" onerror="this.style.display='none'">
-
         <h1>✨ El Escáner del Propósito ✨</h1>
-
-        <p>
-            <strong>¡Importante! Sube el volumen al máximo</strong><br>
-            para escuchar el mensaje completo.
-        </p>
-
-        <p>
-            Toca el botón para activar la cámara y<br>
-            apunta al diseño para la Revelación.
-        </p>
-
-        <button id="btnEscanear" type="button">
-            📷 INICIAR ESCÁNER
-        </button>
+        <p><strong>¡Importante!</strong> Sube el volumen al máximo para escuchar el mensaje completo.</p>
+        <p>Toca el botón para activar la cámara y apunta al diseño para la Revelación.</p>
+        <button id="btnEscanear" type="button">📷 INICIAR ESCÁNER</button>
     </div>
 
-    <!-- ========================================
-         LOADING
-    ======================================== -->
     <div id="loading">
         <div class="spinner"></div>
+        <div id="loadingText">Inicializando cámara...</div>
     </div>
 
-    <!-- ========================================
-         CONTENEDOR AR
-    ======================================== -->
     <div id="ar-wrapper"></div>
 
-    <!-- ========================================
-         CONTROLES DE VIDEO
-    ======================================== -->
     <div id="controles">
         <button class="control-btn" id="btnPlay" title="Play/Pausa">▶️</button>
         <button class="control-btn" id="btnVolumen" title="Volumen">🔊</button>
         <button class="control-btn" id="btnLoop" title="Repetir">🔁</button>
     </div>
 
-    <!-- ========================================
-         BOTÓN CERRAR
-    ======================================== -->
     <button id="btnCerrar" title="Cerrar">✕</button>
 
-    <!-- ========================================
-         INDICADOR DE TRACKING
-    ======================================== -->
     <div id="trackingIndicator">
         <div class="tracking-dot"></div>
         <span id="trackingText">Buscando marcador...</span>
     </div>
 
-    <!-- ========================================
-         MENSAJE DE ESTADO
-    ======================================== -->
     <div id="hint">Apunta la cámara a tu diseño</div>
 
-    <!-- ========================================
-         JAVASCRIPT PRINCIPAL
-    ======================================== -->
     <script>
-        // ============================================
-        // ELEMENTOS DEL DOM
-        // ============================================
         const elementos = {
             inicio: document.getElementById('inicio'),
             arWrapper: document.getElementById('ar-wrapper'),
             loading: document.getElementById('loading'),
+            loadingText: document.getElementById('loadingText'),
             hint: document.getElementById('hint'),
             controles: document.getElementById('controles'),
             btnEscanear: document.getElementById('btnEscanear'),
@@ -417,208 +277,151 @@
             trackingDot: document.querySelector('.tracking-dot')
         };
 
-        // ============================================
-        // ESTADO DE LA APLICACIÓN
-        // ============================================
         let estado = {
             videoDetectado: false,
             videoPausado: false,
             videoMuteado: false,
             videoLoop: true,
             sceneEl: null,
-            videoEl: null,
-            videoPlane: null
+            videoEls: {}
         };
 
-        // ============================================
-        // FUNCIÓN: MOSTRAR MENSAJE
-        // ============================================
         function mostrarMensaje(texto, tipo = '') {
             elementos.hint.textContent = texto;
             elementos.hint.className = tipo;
         }
 
-        // ============================================
-        // FUNCIÓN: INICIAR AR
-        // ============================================
         elementos.btnEscanear.addEventListener('click', async () => {
             try {
-                // Mostrar loading
                 elementos.loading.classList.add('visible');
+                elementos.loadingText.textContent = 'Inicializando cámara...';
+                elementos.btnEscanear.disabled = true;
+
+                // Solicitar acceso a cámara primero
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+
                 elementos.inicio.style.display = 'none';
 
-                // Crear escena AR
                 elementos.arWrapper.innerHTML = `
                     <a-scene
-        mindar-image="imageTargetSrc: targets.mind; maxTrack: 3; autoStart: false; uiLoading: no; uiError: no; uiScanning: no;"
-        color-space="sRGB"
-        embedded
-        renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true; antialias: true;"
-        vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false">
+                        mindar-image="imageTargetSrc: targets.mind; maxTrack: 3; autoStart: false; uiLoading: no; uiError: no; uiScanning: no;"
+                        color-space="sRGB"
+                        embedded
+                        renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true; antialias: true;"
+                        vr-mode-ui="enabled: false"
+                        device-orientation-permission-ui="enabled: false">
 
-        <a-assets>
-            <video id="vidBru" 
-                   src="video_bru.mp4" 
-                   preload="auto" 
-                   playsinline 
-                   webkit-playsinline
-                   crossorigin="anonymous"></video>
-            
-            <video id="vidLeon" 
-                   src="video_leon.mp4" 
-                   preload="auto" 
-                   playsinline 
-                   webkit-playsinline
-                   crossorigin="anonymous"></video>
+                        <a-assets>
+                            <video id="vidBru" src="video_bru.mp4" preload="auto" playsinline webkit-playsinline crossorigin="anonymous"></video>
+                            <video id="vidLeon" src="video_leon.mp4" preload="auto" playsinline webkit-playsinline crossorigin="anonymous"></video>
+                            <video id="vidBoca" src="video_boca.mp4" preload="auto" playsinline webkit-playsinline crossorigin="anonymous"></video>
+                        </a-assets>
 
-            <video id="vidBoca" 
-                   src="video_boca.mp4" 
-                   preload="auto" 
-                   playsinline 
-                   webkit-playsinline
-                   crossorigin="anonymous"></video>
-        </a-assets>
+                        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+                        <a-entity mindar-image-target="targetIndex: 0">
+                            <a-video src="#vidBru" position="0 0 0" rotation="0 0 0" width="1" height="1.77"></a-video>
+                        </a-entity>
 
-        <a-entity mindar-image-target="targetIndex: 0">
-            <a-video id="planeBru"
-                     src="#vidBru"
-                     position="0 0 0"
-                     rotation="0 0 0"
-                     width="1"
-                     height="1.77"> </a-video>
-        </a-entity>
+                        <a-entity mindar-image-target="targetIndex: 1">
+                            <a-video src="#vidLeon" position="0 0 0" rotation="0 0 0" width="1" height="1.77"></a-video>
+                        </a-entity>
 
-        <a-entity mindar-image-target="targetIndex: 1">
-            <a-video id="planeLeon"
-                     src="#vidLeon"
-                     position="0 0 0"
-                     rotation="0 0 0"
-                     width="1"
-                     height="1.77">
-            </a-video>
-        </a-entity>
-
-        <a-entity mindar-image-target="targetIndex: 2">
-            <a-video id="planeBoca"
-                     src="#vidBoca"
-                     position="0 0 0"
-                     rotation="0 0 0"
-                     width="1"
-                     height="1.77">
-            </a-video>
-        </a-entity>
-    </a-scene>
+                        <a-entity mindar-image-target="targetIndex: 2">
+                            <a-video src="#vidBoca" position="0 0 0" rotation="0 0 0" width="1" height="1.77"></a-video>
+                        </a-entity>
+                    </a-scene>
                 `;
 
                 elementos.arWrapper.style.display = 'block';
 
-                // Obtener elementos de la escena
                 estado.sceneEl = document.querySelector('a-scene');
-                estado.videoEl = document.querySelector('#videoAR');
-                estado.videoPlane = document.querySelector('#videoPlane');
+                elementos.loadingText.textContent = 'Iniciando AR...';
 
-                // Configurar video
-                estado.videoEl.muted = estado.videoMuteado;
-                estado.videoEl.loop = estado.videoLoop;
-
-                // Ajustar aspecto del video
-                estado.videoEl.addEventListener('loadedmetadata', () => {
-                    const aspect = estado.videoEl.videoWidth / estado.videoEl.videoHeight;
-                    estado.videoPlane.setAttribute('width', 1);
-                    estado.videoPlane.setAttribute('height', 1 / aspect);
-                });
-
-                // Iniciar MindAR
                 await estado.sceneEl.components['mindar-image'].system.start();
 
-                // Ocultar loading y mostrar UI
                 elementos.loading.classList.remove('visible');
                 elementos.btnCerrar.style.display = 'flex';
                 elementos.trackingIndicator.classList.add('visible');
                 mostrarMensaje('Apunta la cámara a tu diseño', 'warning');
 
-                // Configurar eventos de tracking
                 configurarEventosTracking();
 
             } catch (error) {
-                console.error('Error al iniciar AR:', error);
+                console.error('Error detallado:', error);
                 elementos.loading.classList.remove('visible');
-                mostrarMensaje('Error: No se pudo acceder a la cámara', 'error');
+                elementos.btnEscanear.disabled = false;
+                
+                let mensaje = 'Error: ';
+                if (error.name === 'NotAllowedError') {
+                    mensaje += 'Permiso de cámara denegado. Ve a Configuración → Privacidad → Cámara';
+                } else if (error.name === 'NotFoundError') {
+                    mensaje += 'No se encontró cámara en tu dispositivo';
+                } else if (error.name === 'NotSupportedError') {
+                    mensaje += 'Tu navegador no soporta acceso a cámara';
+                } else {
+                    mensaje += error.message || 'No se pudo acceder a la cámara';
+                }
+                
+                mostrarMensaje(mensaje, 'error');
                 setTimeout(() => {
                     elementos.inicio.style.display = 'flex';
                     elementos.arWrapper.style.display = 'none';
-                }, 3000);
+                }, 4000);
             }
         });
 
-        // ============================================
-        // FUNCIÓN: CONFIGURAR EVENTOS DE TRACKING
-        // ============================================
         function configurarEventosTracking() {
-            // Cuando se detecta el marcador
-            estado.sceneEl.addEventListener('targetFound', () => {
+            estado.sceneEl.addEventListener('targetFound', (e) => {
+                const idx = e.detail.targetIndex;
+                const videoEl = document.querySelector(`#vidBru, #vidLeon, #vidBoca`);
+                if (videoEl) videoEl.play();
+                
                 estado.videoDetectado = true;
                 elementos.trackingDot.classList.add('active');
                 elementos.trackingText.textContent = 'Marcador detectado';
-                estado.videoPlane.setAttribute('visible', true);
-                estado.videoEl.play();
-                estado.videoPausado = false;
-                actualizarBotonPlay();
                 elementos.controles.classList.add('visible');
                 mostrarMensaje('🎬 Video reproduciendo', 'success');
             });
 
-            // Cuando se pierde el marcador
             estado.sceneEl.addEventListener('targetLost', () => {
+                const videos = document.querySelectorAll('video');
+                videos.forEach(v => v.pause());
+                
                 estado.videoDetectado = false;
                 elementos.trackingDot.classList.remove('active');
                 elementos.trackingText.textContent = 'Buscando marcador...';
-                estado.videoPlane.setAttribute('visible', false);
-                estado.videoEl.pause();
                 elementos.controles.classList.remove('visible');
                 mostrarMensaje('Apunta la cámara a tu diseño', 'warning');
             });
         }
 
-        // ============================================
-        // CONTROL: PLAY/PAUSA
-        // ============================================
         elementos.btnPlay.addEventListener('click', () => {
-            if (!estado.videoDetectado) return;
-
-            if (estado.videoPausado) {
-                estado.videoEl.play();
-                estado.videoPausado = false;
-            } else {
-                estado.videoEl.pause();
-                estado.videoPausado = true;
-            }
-            actualizarBotonPlay();
+            const videos = document.querySelectorAll('video');
+            videos.forEach(v => {
+                if (estado.videoPausado) {
+                    v.play();
+                } else {
+                    v.pause();
+                }
+            });
+            estado.videoPausado = !estado.videoPausado;
+            elementos.btnPlay.textContent = estado.videoPausado ? '⏸️' : '▶️';
         });
 
-        function actualizarBotonPlay() {
-            elementos.btnPlay.textContent = estado.videoPausado ? '▶️' : '⏸️';
-        }
-
-        // ============================================
-        // CONTROL: VOLUMEN
-        // ============================================
         elementos.btnVolumen.addEventListener('click', () => {
+            const videos = document.querySelectorAll('video');
             estado.videoMuteado = !estado.videoMuteado;
-            estado.videoEl.muted = estado.videoMuteado;
+            videos.forEach(v => v.muted = estado.videoMuteado);
             elementos.btnVolumen.textContent = estado.videoMuteado ? '🔇' : '🔊';
             elementos.btnVolumen.classList.toggle('active', !estado.videoMuteado);
         });
 
-        // ============================================
-        // CONTROL: LOOP
-        // ============================================
         elementos.btnLoop.addEventListener('click', () => {
+            const videos = document.querySelectorAll('video');
             estado.videoLoop = !estado.videoLoop;
-            estado.videoEl.loop = estado.videoLoop;
+            videos.forEach(v => v.loop = estado.videoLoop);
             elementos.btnLoop.classList.toggle('active', estado.videoLoop);
             mostrarMensaje(
                 estado.videoLoop ? 'Repetición activada' : 'Repetición desactivada',
@@ -626,31 +429,24 @@
             );
         });
 
-        // ============================================
-        // BOTÓN CERRAR
-        // ============================================
         elementos.btnCerrar.addEventListener('click', async () => {
-            if (estado.sceneEl && estado.sceneEl.components['mindar-image']) {
+            if (estado.sceneEl?.components['mindar-image']) {
                 await estado.sceneEl.components['mindar-image'].system.stop();
             }
+            elementos.arWrapper.innerHTML = '';
             elementos.arWrapper.style.display = 'none';
             elementos.btnCerrar.style.display = 'none';
             elementos.controles.classList.remove('visible');
             elementos.trackingIndicator.classList.remove('visible');
             elementos.inicio.style.display = 'flex';
-            estado.videoDetectado = false;
+            elementos.btnEscanear.disabled = false;
         });
 
-        // ============================================
-        // PREVENIR ZOOM EN MÓVILES
-        // ============================================
         document.addEventListener('touchmove', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
         }, { passive: false });
-
     </script>
 </body>
-
 </html>
